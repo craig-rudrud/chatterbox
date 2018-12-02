@@ -26,29 +26,29 @@
             </Text>
             <HBox alignment="CENTER" minHeight="-Infinity" prefHeight="54.0" prefWidth="100.0" spacing="15.0" VBox.vgrow="NEVER">
                <children>
-                  <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
+                  <VBox alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
                      <children>
-                        <TextField fx:id="senderIPField" minWidth="150.0" promptText="Sender IP" />
-                        <TextField fx:id="senderPortField" promptText="Sender Port" />
+                        <TextField fx:id="serverIPField" alignment="CENTER_RIGHT" minWidth="150.0" promptText="Server IP" />
+                        <TextField fx:id="serverPortField" alignment="CENTER_RIGHT" promptText="Server Port" />
                      </children>
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </VBox>
+                  <!--<VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="15.0">-->
+                     <!--<children>-->
+                        <!--<TextField fx:id="senderIPField" minWidth="150.0" promptText="Sender IP" />-->
+                        <!--<TextField fx:id="senderPortField" promptText="Sender Port" />-->
+                     <!--</children>-->
+                     <!--<HBox.margin>-->
+                        <!--<Insets />-->
+                     <!--</HBox.margin>-->
+                  <!--</VBox>-->
                   <VBox alignment="CENTER" prefHeight="69.0" prefWidth="47.0" spacing="15.0">
                      <children>
                         <Button fx:id="hostButton" alignment="CENTER" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" text="Host" textAlignment="CENTER" />
                         <Button fx:id="joinButton" alignment="CENTER" layoutX="10.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" prefWidth="80.0" text="Join" textAlignment="CENTER" />
                      </children>
-                  </VBox>
-                  <VBox alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
-                     <children>
-                        <TextField fx:id="receiverIPField" alignment="CENTER_RIGHT" minWidth="150.0" promptText="Receiver IP" />
-                        <TextField fx:id="receiverPortField" alignment="CENTER_RIGHT" promptText="Receiver Port" />
-                     </children>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
                   </VBox>
                </children>
             </HBox>

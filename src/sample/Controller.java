@@ -27,13 +27,9 @@ public class Controller implements Initializable {
     @FXML
     private TextField messageField;
     @FXML
-    private TextField receiverIPField;
+    private TextField serverIPField;
     @FXML
-    private TextField receiverPortField;
-    @FXML
-    private TextField senderIPField;
-    @FXML
-    private TextField senderPortField;
+    private TextField serverPortField;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -41,24 +37,19 @@ public class Controller implements Initializable {
 
         hostButton.setOnAction(event -> {
             if (mode != 0) {
-                hostIP = receiverIPField.getText();
-                hostPort = receiverPortField.getText();
+                hostIP = serverIPField.getText();
+                hostPort = serverPortField.getText();
                 try {
                     serverSocket = new ServerSocket(Integer.valueOf(hostPort), 0, InetAddress.getByName(hostIP));
                     serverSocket.setSoTimeout(10000);
 
-                    chatLogArea.appendText("Waiting for client on port " + serverSocket.getLocalPort() + "...\n");
+                    chatLogArea.appendText("Connection opened on port " + serverSocket.getLocalPort() + ". Waiting for client.\n");
                     server = serverSocket.accept();
 
-                    chatLogArea.appendText("Just connected to " + server.getRemoteSocketAddress() + "\n");
+                    chatLogArea.appendText("Successfully connected to " + server.getRemoteSocketAddress() + ". Say hello!\n");
                     mode = 0;
 
-                    out = new DataOutputStream(server.getOutputStream());
-                    in = new BufferedReader(new InputStreamReader(server.getInputStream()));
-
-                    Server s = new Server();
-                    s.start();
-//                    server.close();
+                    startChat(server);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -67,21 +58,16 @@ public class Controller implements Initializable {
 
         joinButton.setOnAction(event -> {
             if (mode != 1) {
-                hostIP = receiverIPField.getText();
-                hostPort = receiverPortField.getText();
+                hostIP = serverIPField.getText();
+                hostPort = serverPortField.getText();
                 try {
-                    chatLogArea.appendText("Connecting to " + hostIP + " on port " + hostPort + "...\n");
+                    chatLogArea.appendText("Attempting to connect to " + hostIP + " on port " + hostPort + "...\n");
                     client = new Socket(InetAddress.getByName(hostIP), Integer.parseInt(hostPort));
 
-                    chatLogArea.appendText("Just connected to " + client.getRemoteSocketAddress() + "\n");
+                    chatLogArea.appendText("Successfully connected to " + client.getRemoteSocketAddress() + ". Say hello!\n");
                     mode = 1;
 
-                    out = new DataOutputStream(client.getOutputStream());
-                    in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-                    Client c = new Client();
-                    c.start();
-//                    client.close();
+                    startChat(client);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -97,39 +83,53 @@ public class Controller implements Initializable {
         });
     }
 
+    public void disconnect() {
+        try {
+            out.writeUTF("Other has disconnected.");
+            chatLogArea.appendText("You have disconnected.\n");
+            messageField.setText("");
+            out.flush();
+            if (mode == 0) {
+                server.close();
+            }
+            else if (mode == 1) {
+                client.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startChat(Socket socket) throws IOException {
+        out = new DataOutputStream(socket.getOutputStream());
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+        ChatLogUpdater chat = new ChatLogUpdater();
+        chat.start();
+    }
+
     private void sendMessage() {
-        String message = messageField.getText();
-        if(!message.isEmpty()) {
-            try {
-                out.writeUTF("Other: " + message + "\n");
-                chatLogArea.appendText("You: " + message + "\n");
-                messageField.setText("");
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    class Server extends Thread {
-        public void run() {
-            String input;
-            try {
-                while ((input = in.readLine()) != null) {
-                    chatLogArea.appendText(input);
+        if (mode > -1) {
+            String message = messageField.getText();
+            if (!message.isEmpty()) {
+                try {
+                    out.writeUTF("Other: " + message + "\n");
+                    chatLogArea.appendText("You: " + message + "\n");
+                    messageField.setText("");
+                    out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                chatLogArea.appendText("Unable to get messages!");
             }
         }
     }
 
-    class Client extends Thread {
+    class ChatLogUpdater extends Thread {
         public void run() {
             String input;
             try {
                 while ((input = in.readLine()) != null) {
-                    chatLogArea.appendText(input);
+                    chatLogArea.appendText(input + "\n");
                 }
             } catch (IOException e) {
                 chatLogArea.appendText("Unable to get messages!");
