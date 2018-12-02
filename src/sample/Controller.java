@@ -83,7 +83,7 @@ public class Controller implements Initializable {
         });
     }
 
-    public void disconnect() {
+    void disconnect() {
         try {
             out.writeUTF("Other has disconnected.");
             chatLogArea.appendText("You have disconnected.\n");
@@ -103,7 +103,6 @@ public class Controller implements Initializable {
     private void startChat(Socket socket) throws IOException {
         out = new DataOutputStream(socket.getOutputStream());
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
         ChatLogUpdater chat = new ChatLogUpdater();
         chat.start();
     }
