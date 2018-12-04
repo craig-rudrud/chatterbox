@@ -33,8 +33,9 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        mode = -1;
+        mode = -1; // 0 = you are the server, 1 = you're joining a server
 
+        // Establishing the server
         hostButton.setOnAction(event -> {
             if (mode != 0) {
                 hostIP = serverIPField.getText();
@@ -44,7 +45,7 @@ public class Controller implements Initializable {
                     serverSocket.setSoTimeout(10000);
 
                     chatLogArea.appendText("Connection opened on port " + serverSocket.getLocalPort() + ". Waiting for client.\n");
-                    server = serverSocket.accept();
+                    server = serverSocket.accept(); // UI freezes here because accept() runs in a loop.
 
                     chatLogArea.appendText("Successfully connected to " + server.getRemoteSocketAddress() + ". Say hello!\n");
                     mode = 0;
@@ -56,6 +57,7 @@ public class Controller implements Initializable {
             }
         });
 
+        // Joining a server
         joinButton.setOnAction(event -> {
             if (mode != 1) {
                 hostIP = serverIPField.getText();
