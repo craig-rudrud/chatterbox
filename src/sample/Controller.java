@@ -136,6 +136,10 @@ public class Controller implements Initializable {
         }
     }
 
+    class getConnections extends Thread {
+
+    }
+
     private BufferedReader in;
     private DataOutputStream out;
     private int mode;
